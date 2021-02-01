@@ -1,48 +1,45 @@
+import style from "./css/style.css";
+import menu from "./dataBases/menu.json";
+import element from "./templates/elementMenu.hbs";
 
-import style from './css/style.css';
-import PNotify from '../node_modules/pnotify/dist/es/PNotify.js';
-import PNotifyStyleMaterial from 'pnotify/dist/es/PNotifyStyleMaterial.js';
-import PNotifyButtons from '../node_modules/pnotify/dist/es/PNotifyButtons.js';
+const listMenu = menu.reduce((acc, e) => {
+  return (acc += element(e));
+}, "");
 
-PNotify.defaults.styling = 'material';
-PNotify.defaults.icons = 'material';
+const listRef = document.querySelector(".js-menu");
+const switcher = document.querySelector(".theme-switch__toggle");
+const bodyRef = document.querySelector("body");
 
+listRef.insertAdjacentHTML("beforeend", listMenu);
 
-console.log(PNotify.defaults)
+const Theme = {
+  LIGHT: "light-theme",
+  DARK: "dark-theme",
+};
 
+const handleTheme = function () {
+  if (
+    bodyRef.classList.contains("light-theme") ||
+    !bodyRef.getAttribute("class")
+  ) {
+    bodyRef.classList.add("dark-theme");
+    bodyRef.classList.remove("light-theme");
+    localStorage.setItem("DARK", Theme.DARK);
+    localStorage.removeItem("LIGHT");
+  } else {
+    bodyRef.classList.add("light-theme");
+    bodyRef.classList.remove("dark-theme");
+    localStorage.setItem("LIGHT", Theme.LIGHT);
+    localStorage.removeItem("DARK");
+  }
+};
 
+switcher.addEventListener("change", handleTheme);
 
-PNotify.alert('Notice me, senpai!');
-PNotify.notice({
-    title: 'Desktop Notice',
-    text: 'I\'ll appear as a desktop notification. Unless I can\'t. I\'ll still appear as a regular PNotify notice then.'
-  });
-
-
-// let inp = document.querySelector('input');
-// inp.addEventListener('change', (e)=> {
-
-
-//     e.target.value.length > 3 
-//     ? fetch(`https://pokeapi.co/api/v2/pokemon/${e.target.value}`)
-//     .then(data=> data.json())
-//     .then(({name, abilities, sprites})=> 
-//     {
-//         document.body.insertAdjacentHTML('afterbegin',
-//     `<div class="wrapper">
-//     <h2>${name}</h2>
-//     <img src=${sprites.front_default}>
-//     <ul class="abilities"></ul>
-//     </div>`)
-//     abilities.forEach(({ability})=> {
-//         document.querySelector(".abilities").innerHTML += `<li>${ability.name}</li>`
-//     })
-
-// }) 
-//     : ''
-
-// })
-
-
-
-
+if (localStorage.getItem("LIGHT")) {
+  bodyRef.classList.toggle(localStorage.getItem("LIGHT"));
+}
+if (localStorage.getItem("DARK")) {
+  bodyRef.classList.toggle(localStorage.getItem("DARK"));
+  switcher.checked = true;
+}
